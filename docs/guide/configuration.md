@@ -6,11 +6,16 @@ Beam aims for a minimal, predictable configuration surface. You can use a dedica
 
 `Beam()`, `beam()`, and `configureBeam()` accept a `BeamConfig` configuration object with the following options:
 
+- `tokenPath?: string` (default: `/beam/token`) — GET endpoint that sets a JWT cookie used for auth
+- `tokenCookie?: string` (default: `BEAM-TOKEN`) — cookie name where the JWT is stored
+- `clockSkewSeconds?: number` (default: `30`) — allowed skew when validating JWT `exp`
+
 ### baseUrl
 
 - Defaults to `window.location.origin` or `process.env.SERVER_URL`
-- Flag endpoints used by the SDK:
-    - POST `${baseUrl}/${path}/:flag`
+- Endpoints used by the SDK:
+    - GET `${baseUrl}${tokenPath}` to establish a JWT cookie
+    - POST `${baseUrl}${path}` for feature flag evaluation
 
 ### path
 
@@ -27,8 +32,7 @@ Beam aims for a minimal, predictable configuration surface. You can use a dedica
 - Merged into the request headers for all SDK requests.
 - Beam also auto-populates when available:
     - `X-Requested-With: XMLHttpRequest`
-    - CSRF: `X-CSRF-TOKEN` (from `<meta name="csrf-token" content="…">`)
-    - Bearer: `Authorization: Bearer <token>` where token is read from `localStorage` or `sessionStorage` (`auth_token` key) if present.
+    - Bearer: `Authorization: Bearer <token>` where the token is a JWT read from a cookie (default: `BEAM-TOKEN`) after a `GET` to `${baseUrl}${tokenPath}` (default: `/beam/token`). Tokens are validated for expiration and refreshed automatically.
 - You can override by passing your own headers.
 
 ### timeout

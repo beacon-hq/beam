@@ -17,6 +17,9 @@ This page documents the core exports of `@beacon-hq/beam`.
   - `headers?: Record<string, string>` (merged into request headers)
   - `timeout?: number` (default: 5000 ms; 0/undefined disables timeout)
   - `global?: boolean | string` (optional globalThis registration name)
+  - `tokenPath?: string` (default: `/beam/token`) — GET endpoint that sets a JWT cookie used for auth
+  - `tokenCookie?: string` (default: `BEAM-TOKEN`) — cookie name where the JWT is stored
+  - `clockSkewSeconds?: number` (default: `30`) — allowed skew when validating JWT `exp`
 
 ## beam(config?)
 
@@ -79,8 +82,7 @@ Requests are POSTed to `${baseUrl}${path}` with JSON body `{ flag, scope? }` and
 
 - `Content-Type: application/json`
 - `X-Requested-With: XMLHttpRequest`
-- `X-CSRF-TOKEN` from `<meta name="csrf-token">` when present
-- `Authorization: Bearer <token>` from localStorage/sessionStorage key `auth_token` when present
+- `Authorization: Bearer <token>` using a JWT obtained via `GET ${baseUrl}${tokenPath}` and read from the `${tokenCookie}` cookie (default: `BEAM-TOKEN`). Tokens are validated for expiration and refreshed when needed.
 
 ### Timeouts
 
