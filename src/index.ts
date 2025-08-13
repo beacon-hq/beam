@@ -10,6 +10,9 @@ export interface BeamConfig {
     headers?: Record<string, string>;
     timeout?: number;
     global?: boolean | string;
+    tokenPath?: string; // Path to retrieve JWT via cookie (GET)
+    tokenCookie?: string; // Cookie name that carries the JWT
+    clockSkewSeconds?: number; // Allowed clock skew when validating JWT exp
 }
 
 export interface FeatureFlag {
@@ -66,6 +69,8 @@ function getFetch(): FetchLike {
 export class Beam {
     private readonly config: BeamConfig;
     private cache: Map<string, FeatureFlag> = new Map();
+    private jwtToken: string | null = null;
+    private jwtExp: number | null = null; // seconds since epoch
 
     constructor(config: BeamConfig = {}) {
         const defaultBase = this.getBaseUrl();
@@ -78,6 +83,9 @@ export class Beam {
             baseUrl,
             path,
             timeout: typeof config.timeout === 'number' ? config.timeout : 5000,
+            tokenPath: normalizePath(config.tokenPath ?? '/beam/token'),
+            tokenCookie: config.tokenCookie ?? 'BEAM-TOKEN',
+            clockSkewSeconds: typeof config.clockSkewSeconds === 'number' ? config.clockSkewSeconds : 30,
         };
     }
 
@@ -121,11 +129,14 @@ export class Beam {
         this.cache.clear();
     }
 
-    private fetchFlag(flag: string, scope?: Scope): Promise<FeatureFlag> {
+    private async fetchFlag(flag: string, scope?: Scope): Promise<FeatureFlag> {
         const url = `${this.config.baseUrl}${this.config.path}`;
         const payload: Record<string, unknown> = { flag };
         if (scope && Object.keys(scope).length > 0) payload['scope'] = scope;
         const body = JSON.stringify(payload);
+
+        // Ensure we have a valid token before making the request
+        await this.ensureToken();
 
         return getFetch()(url, {
             method: 'POST',
@@ -137,6 +148,7 @@ export class Beam {
             },
             body,
             signal: this.getAbortSignal(),
+            credentials: 'include',
         } as RequestInit).then(async (response) => {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -175,24 +187,110 @@ export class Beam {
             }
         }
 
-        // Bearer token (Sanctum API tokens)
-        let apiToken: string | null = null;
-        try {
-            if (typeof localStorage !== 'undefined') {
-                apiToken = localStorage.getItem('auth_token');
-            }
-            if (!apiToken && typeof sessionStorage !== 'undefined') {
-                apiToken = sessionStorage.getItem('auth_token');
-            }
-        } catch {
-            // Accessing storage may throw in some environments; ignore
-        }
-
-        if (apiToken) {
-            headers['Authorization'] = `Bearer ${apiToken}`;
+        // Authorization via JWT obtained from /beam/token cookie
+        if (this.jwtToken) {
+            headers['Authorization'] = `Bearer ${this.jwtToken}`;
         }
 
         return headers;
+    }
+
+    private isJwtValid(): boolean {
+        if (!this.jwtToken || !this.jwtExp) return false;
+        const skew = this.config.clockSkewSeconds ?? 30;
+        const now = Math.floor(Date.now() / 1000);
+        return now + skew < this.jwtExp;
+    }
+
+    private decodeJwtExp(token: string): number | null {
+        try {
+            const parts = token.split('.');
+            if (parts.length < 2) return null;
+            const payload = parts[1];
+            const json = JSON.parse(this.base64UrlDecode(payload));
+            const exp = typeof json.exp === 'number' ? json.exp : null;
+            return exp ?? null;
+        } catch {
+            return null;
+        }
+    }
+
+    private base64UrlDecode(input: string): string {
+        try {
+            const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+            const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+            if (typeof atob !== 'undefined') {
+                return decodeURIComponent(
+                    Array.prototype.map
+                        .call(atob(padded), (c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                        .join(''),
+                );
+            }
+            // Node.js fallback when Buffer is available
+            const B: any = (globalThis as any).Buffer;
+            if (B && typeof B.from === 'function') {
+                const buf = B.from(padded, 'base64');
+                return buf.toString('utf-8');
+            }
+            return '';
+        } catch {
+            return '';
+        }
+    }
+
+    private readCookie(name: string): string | null {
+        if (typeof document === 'undefined') return null;
+        const cookies = document.cookie ? document.cookie.split('; ') : [];
+        for (const c of cookies) {
+            if (!c) continue;
+            const idx = c.indexOf('=');
+            const k = idx === -1 ? c : c.slice(0, idx);
+            if (k === name) {
+                const v = idx === -1 ? '' : c.slice(idx + 1);
+                try {
+                    return decodeURIComponent(v);
+                } catch {
+                    return v;
+                }
+            }
+        }
+        return null;
+    }
+
+    private async ensureToken(): Promise<void> {
+        // If running outside browser, skip
+        if (typeof window === 'undefined') return;
+
+        if (this.isJwtValid()) return;
+
+        try {
+            const tokenUrl = `${this.config.baseUrl}${this.config.tokenPath}`;
+            await getFetch()(tokenUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'include',
+                signal: this.getAbortSignal(),
+            } as RequestInit);
+        } catch {
+            // ignore network errors here; we'll attempt to use whatever cookie may exist
+        }
+
+        const cookieName = this.config.tokenCookie ?? 'BEAM-TOKEN';
+        const token = this.readCookie(cookieName);
+
+        if (token) {
+            this.jwtToken = token;
+            this.jwtExp = this.decodeJwtExp(token);
+            if (!this.jwtExp) {
+                // If no exp, clear to force refresh next time
+                this.jwtToken = null;
+            }
+        } else {
+            this.jwtToken = null;
+            this.jwtExp = null;
+        }
     }
 
     private getCacheKey(flag: string, scope?: Scope): string {
