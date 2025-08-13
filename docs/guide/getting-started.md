@@ -12,6 +12,12 @@ pnpm add @beacon-hq/beam
 yarn add @beacon-hq/beam
 ```
 
+You will also want to install the Laravel library:
+
+```bash
+composer require beacon-hq/pennant-beam
+```
+
 ## Quickstart
 
 You can create your own Beam instance or use the singleton via `beam()`.
