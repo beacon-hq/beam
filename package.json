@@ -1,0 +1,109 @@
+{
+    "name": "@beacon-hq/beam",
+    "version": "0.1.0",
+    "description": "Frontend helper for Laravel Pennant feature flags (with support for React and Vue)",
+    "keywords": [
+        "beam",
+        "feature-flags",
+        "feature",
+        "flags",
+        "experimentation",
+        "ab-testing",
+        "react",
+        "vue",
+        "frontend",
+        "typescript"
+    ],
+    "homepage": "https://beam.beacon-hq.dev",
+    "bugs": {
+        "url": "https://github.com/beacon-hq/beam/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/beacon-hq/beam.git"
+    },
+    "license": "MIT",
+    "author": "Davey Shafik",
+    "type": "module",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./react": {
+            "types": "./dist/react.d.ts",
+            "import": "./dist/react.js",
+            "require": "./dist/react.cjs"
+        },
+        "./vue": {
+            "types": "./dist/vue.d.ts",
+            "import": "./dist/vue.js",
+            "require": "./dist/vue.cjs"
+        },
+        "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "directories": {
+        "doc": "docs",
+        "test": "test"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "vite build && vite build --mode types",
+        "clean": "rimraf dist",
+        "dev": "vite build --watch",
+        "prepublishOnly": "npm run clean && npm run lint && npm run typecheck && npm run test && npm run build",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
+        "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
+    },
+    "devDependencies": {
+        "@types/node": "^24.2.1",
+        "@types/react": "^18.3.23",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "@vue/test-utils": "^2.4.5",
+        "eslint": "^9.9.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-import": "^2.29.1",
+        "jsdom": "^24.1.0",
+        "prettier": "^3.6.2",
+        "react": "^18.2.0",
+        "react-test-renderer": "^18.2.0",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.5.4",
+        "vite": "^7.1.2",
+        "vite-plugin-dts": "^4.5.4",
+        "vitepress": "^1.6.4",
+        "vitepress-versioning-plugin": "^1.3.0",
+        "vitest": "^3.2.4",
+        "vue": "^3.4.29"
+    },
+    "peerDependencies": {
+        "react": ">=17",
+        "vue": ">=3"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "vue": {
+            "optional": true
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "module": "./dist/index.js"
+}

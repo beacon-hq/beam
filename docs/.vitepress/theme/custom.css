@@ -1,0 +1,28 @@
+:root {
+    --vp-font-family-base: "Source Sans 3", sans-serif;
+    --vp-font-family-mono: "Source Code Pro", monospace;
+    --vp-nav-logo-height: 64px;
+    --vp-code-line-highlight-color: var(--vp-badge-tip-bg);
+    --vp-c-brand-1: #FE527F;
+    --vp-home-hero-name-color: #FD6D64;
+    --vp-button-brand-bg: #FD6D64;
+    --vp-button-brand-hover-bg: #FE527F;
+}
+
+header .title span {
+    font-size: 22px;
+    font-family: var(--vp-font-family-base);
+}
+
+.heading .text {
+    font-size: 3rem;
+    font-weight: 400;
+}
+
+header .title img {
+    padding: 8px;
+}
+
+code {
+    white-space: pre;
+}
