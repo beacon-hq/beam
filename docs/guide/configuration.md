@@ -62,13 +62,13 @@ import { configureBeam } from '@beacon-hq/beam/vue';
 import { beam } from '@beacon-hq/beam';
 
 // First call creates the singleton
-const B = beam({ baseUrl: '/beam' });
+const Beam = beam();
 
 // Subsequent calls return the same instance
 const again = beam();
 
 // Passing a config later re-creates the singleton
-const replaced = beam({ baseUrl: '/flags' });
+const replaced = beam({ path: '/flags' });
 ```
 
 ## Caching

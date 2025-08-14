@@ -28,8 +28,8 @@ You can create your own Beam instance or use the singleton via `beam()`.
 import { Beam, beam } from '@beacon-hq/beam';
 
 window.Beam = new Beam();
-window.Beam.active('new-ui');
-window.Beam.value<string>('experiment', 'control');
+await window.Beam.active('new-ui');
+await window.Beam.value<string>('experiment', 'control');
 
 // Or use the singleton
 const result = await beam().get('some-flag');
@@ -75,7 +75,7 @@ const { value } = useFlagValue<string>('experiment', { defaultValue: 'control' }
 
 ## Backend endpoint
 
-By default Beam talks to `/beam` on your origin. The core SDK will:
+By default, Beam talks to `/beam` on your origin. The core SDK will:
 
 - POST `/beam/:flag` with `{ context }`
 
