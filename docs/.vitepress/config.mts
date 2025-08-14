@@ -11,18 +11,30 @@ export default defineVersionedConfig({
     latestVersion: 'dev',
   },
   head: [
-    [
-      'meta',
-      { name: 'author', content: 'Davey Shafik' }
-    ],
-    [
-      'meta',
-      { name:"twitter:image", content: BASE_PATH + "assets/images/social.png" }
-    ],
-    [
-      'meta',
-      { name:"og:image", content: BASE_PATH +  "assets/images/social.png" }
-    ],
+      ['meta', { name: 'author', content: 'Beacon HQ' }],
+      ['meta', { name: 'og:type', content: 'website' }],
+      ['meta', { name: 'og:title', content: 'Beam — Laravel Pennant in your Browser' }],
+      [
+          'meta',
+          {
+              name: 'og:description',
+              content:
+                  'Access Laravel Pennant feature flags in your browser with Beam, a client-side library for Beacon and Laravel Pennant.',
+          },
+      ],
+      ['meta', { name: 'og:image', content: '/images/social.png' }],
+
+      ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+      ['meta', { name: 'twitter:title', content: 'Beam — Laravel Pennant in your Browser' }],
+      [
+          'meta',
+          {
+              name: 'twitter:description',
+              content:
+                  'Access Laravel Pennant feature flags in your browser with Beam, a client-side library for Beacon and Laravel Pennant.',
+          },
+      ],
+      ['meta', { name: 'twitter:image', content: '/images/social.png' }],
     [
       'link',
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' }
