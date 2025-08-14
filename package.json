@@ -1,6 +1,6 @@
 {
     "name": "@beacon-hq/beam",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Frontend helper for Laravel Pennant feature flags (with support for React and Vue)",
     "keywords": [
         "beam",
@@ -28,18 +28,15 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "require": "./dist/index.cjs"
+            "import": "./dist/index.js"
         },
         "./react": {
             "types": "./dist/react.d.ts",
-            "import": "./dist/react.js",
-            "require": "./dist/react.cjs"
+            "import": "./dist/react.js"
         },
         "./vue": {
             "types": "./dist/vue.d.ts",
-            "import": "./dist/vue.js",
-            "require": "./dist/vue.cjs"
+            "import": "./dist/vue.js"
         },
         "./package.json": "./package.json"
     },

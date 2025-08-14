@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
                   lib: {
                       entry: 'src/index.ts',
                       name: 'Beam',
-                      formats: ['es', 'cjs'],
+                      formats: ['es'],
                   },
                   rollupOptions: {
                       // No output emitted in types-only mode other than d.ts via plugin
@@ -23,10 +23,8 @@ export default defineConfig(({ mode }) => {
                           vue: 'src/vue.ts',
                       },
                       output: {
-                          // Keep filenames consistent with package.json
-                          entryFileNames: ({ format }) => (format === 'cjs' ? '[name].cjs' : '[name].js'),
-                          // Ensure CJS output treats mixed default+named exports as named to avoid warnings
-                          exports: 'named',
+                          // ESM-only filenames
+                          entryFileNames: '[name].js',
                       },
                   },
                   sourcemap: true,
@@ -35,8 +33,8 @@ export default defineConfig(({ mode }) => {
                   lib: {
                       entry: 'src/index.ts',
                       name: 'Beam',
-                      formats: ['es', 'cjs'],
-                      fileName: (format) => (format === 'cjs' ? 'index.cjs' : 'index.js'),
+                      formats: ['es'],
+                      fileName: () => 'index.js',
                   },
                   sourcemap: true,
                   rollupOptions: {
@@ -51,8 +49,7 @@ export default defineConfig(({ mode }) => {
                           'vue',
                       ],
                       output: {
-                          entryFileNames: ({ format }) => (format === 'cjs' ? '[name].cjs' : '[name].js'),
-                          exports: 'named',
+                          entryFileNames: '[name].js',
                       },
                   },
               },

@@ -129,13 +129,13 @@ export class Beam {
         this.cache.clear();
     }
 
-    private async fetchFlag(flag: string, scope?: Scope): Promise<FeatureFlag> {
-        const url = `${this.config.baseUrl}${this.config.path}`;
-        const payload: Record<string, unknown> = { flag };
-        if (scope && Object.keys(scope).length > 0) payload['scope'] = scope;
-        const body = JSON.stringify(payload);
+    private async fetchFlag(featureFlag: string, scope?: Scope): Promise<FeatureFlag> {
+        const url = `${this.config.baseUrl}${this.config.path}/${encodeURIComponent(featureFlag)}`;
+        if (scope === undefined || Object.keys(scope).length === 0) {
+            scope = {};
+        }
+        const body = JSON.stringify(scope);
 
-        // Ensure we have a valid token before making the request
         await this.ensureToken();
 
         return getFetch()(url, {
@@ -148,17 +148,21 @@ export class Beam {
             },
             body,
             signal: this.getAbortSignal(),
-            credentials: 'include',
+            credentials: 'same-origin',
         } as RequestInit).then(async (response) => {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+
             const raw = (await response.json()) as any;
-            // Normalize to FeatureFlag shape
             const status = typeof raw.status === 'boolean' ? raw.status : !!raw.active;
             const value = raw.value;
-            const out: FeatureFlag = { featureFlag: flag, status };
-            if (status && typeof value !== 'undefined') out.value = value;
+            const out: FeatureFlag = { featureFlag, status };
+
+            if (status && typeof value !== 'undefined') {
+                out.value = value;
+            }
+
             return out;
         });
     }
@@ -197,7 +201,7 @@ export class Beam {
         try {
             const parts = token.split('.');
             if (parts.length < 2) return null;
-            const payload = parts[1];
+            const payload = parts[1]!;
             const json = JSON.parse(this.base64UrlDecode(payload));
             const exp = typeof json.exp === 'number' ? json.exp : null;
             return exp ?? null;
@@ -261,7 +265,6 @@ export class Beam {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-                credentials: 'include',
                 signal: this.getAbortSignal(),
             } as RequestInit);
         } catch {

@@ -57,7 +57,7 @@ describe('Authorization token is added to feature-flag requests', () => {
         } as Response as any;
       }
 
-      if (url === 'http://example.test/beam/feature-flag' && method === 'POST') {
+      if (url.startsWith('http://example.test/beam/feature-flag/') && method === 'POST') {
         // Respond with an active flag so the call proceeds
         return {
           ok: true,
@@ -85,7 +85,7 @@ describe('Authorization token is added to feature-flag requests', () => {
     expect(calls[0].url).toBe('http://example.test/beam/token');
     expect(calls[0].method).toBe('GET');
 
-    expect(calls[1].url).toBe('http://example.test/beam/feature-flag');
+    expect(calls[1].url).toBe('http://example.test/beam/feature-flag/some-flag');
     expect(calls[1].method).toBe('POST');
 
     // Assert Authorization header is present with the token we set

@@ -23,15 +23,22 @@ function jsonResponse(data: any, init?: { ok?: boolean; status?: number; statusT
 function createMockFetch(map: Record<string, { active: boolean; value?: any }>) {
     return async (input: string, init?: RequestInit) => {
         const url = String(input);
+
+        // Extract feature flag from URL path
+        // The URL format is expected to be: baseUrl/path/featureFlag
+        const urlParts = url.split('/');
+        const featureFlag = urlParts.length > 0 ? decodeURIComponent(urlParts[urlParts.length - 1]) : null;
+
+        if (featureFlag && map[featureFlag]) {
+            return jsonResponse(map[featureFlag]);
+        }
+
+        // Fallback to old behavior for other requests
         try {
-            const body = JSON.parse(init.body as string) as { flag?: string; flags?: string[] };
+            const body = JSON.parse(init.body as string) as { flags?: string[] };
             if (Array.isArray(body.flags)) {
                 const out = Object.fromEntries((body.flags || []).map((f) => [f, map[f] ?? { active: false }]));
                 return jsonResponse(out);
-            }
-            if (typeof body.flag === 'string') {
-                const entry = map[body.flag] ?? { active: false };
-                return jsonResponse(entry);
             }
         } catch {
             return jsonResponse({}, { ok: false, status: 400, statusText: 'Bad Request' });
