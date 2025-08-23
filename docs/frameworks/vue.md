@@ -26,9 +26,21 @@ const { status, value, loading, refresh } = useFeatureFlag('new-ui');
 </template>
 ```
 
+Return type:
+
+```typescript
+{ 
+    featureFlag: string; 
+    status: boolean; 
+    value?: any, 
+    loading: boolean, 
+    refresh: fn () => void 
+}
+```
+
 Options extend `BeaconConfig` and add:
 
-- `defaultValue?: T` — value to use when inactive.
+- `defaultValue?: T` — return `value` to use when inactive.
 - `deps?: ReadonlyArray<WatchSource | unknown>` — additional watch deps to control refetching.
 
 

@@ -1,10 +1,6 @@
 # React
 
-Beam provides idiomatic React hooks. Install the core package (React is a peer dependency):
-
-```bash
-npm install @beacon-hq/beam
-```
+Beam provides a simple React hook for using feature flags in your components.
 
 ## useFeatureFlag
 
@@ -26,30 +22,21 @@ export function FeatureGate() {
 }
 ```
 
-Options:
+Return type: 
 
-- `instance?`: Beam — provide a custom instance (defaults to the singleton from `beam()`).
-- `deps?: ReadonlyArray<unknown>` — additional effect deps to control refetching.
-
-## useFlagValue
-
-Fetch a flag’s value and active state with an optional default.
-
-```tsx
-import { useFlagValue } from '@beacon-hq/beam/react';
-
-export function Variant() {
-    const { value, active, loading } = useFlagValue<string>('experiment', { defaultValue: 'control' });
-    if (loading) return <span>Loading…</span>;
-    return <span>{active ? value : 'control'}</span>;
+```typescript
+{ 
+    featureFlag: string; 
+    status: boolean; 
+    value?: any, 
+    loading: boolean, 
+    refresh: fn () => void 
 }
 ```
 
-Return type: `{ featureFlag: string; status: boolean; value?: any, loading: boolean, refresh: fn () => void }`.
-
 Options extend `BeaconConfig` and add:
 
-- `defaultValue?: T` — value to use when inactive.
+- `defaultValue?: T` — `value` to return when inactive.
 - `deps?`: `ReadonlyArray<unknown>` — additional effect deps to control refetching.
 
 

@@ -67,13 +67,23 @@ const { status, value, loading } = useFeatureFlag<string>('experiment', { defaul
 
 ## Installation
 
-```bash
-npm install @beacon-hq/beam
-# or
-pnpm add @beacon-hq/beam
-# or
-yarn add @beacon-hq/beam
+In the root of your Laravel project, run one of the following commands to install the JavaScript package and the Laravel integration:
+
+::: code-group
+
+```bash [npm]
+npm install @beacon-hq/beam && composer require beacon-hq/pennant-beam
 ```
+
+```bash [pnpm]
+pnpm add @beacon-hq/beam && composer require beacon-hq/pennant-beam
+```
+
+```bash [yarn]
+yarn add @beacon-hq/beam && composer require beacon-hq/pennant-beam
+```
+
+:::
 
 ## What is Beam?
 

@@ -57,7 +57,6 @@ if (vueAvailable) {
         let defineComponent: any;
         let nextTick: any;
         let useFeatureFlag: any;
-        let useFlagValue: any;
 
         let dom: any;
         beforeAll(async () => {
@@ -92,7 +91,6 @@ if (vueAvailable) {
             await Promise.resolve();
             await new Promise((r) => setTimeout(r, 0));
 
-            // Wait a bit more for async fetch/json chain to settle
             for (let i = 0; i < 5 && !(wrapper.vm as any).res.status; i++) {
                 await Promise.resolve();
             }
@@ -128,7 +126,6 @@ if (vueAvailable) {
             await Promise.resolve();
             await new Promise((r) => setTimeout(r, 0));
 
-            // Wait until loading flags settle
             for (let i = 0; i < 5 && ((wrapper.vm as any).a.loading || (wrapper.vm as any).b.loading); i++) {
                 await Promise.resolve();
             }

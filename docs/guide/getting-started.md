@@ -4,13 +4,23 @@ Beam is a tiny, framework-friendly frontend helper for Laravel Pennant feature f
 
 ## Installation
 
-```bash
+In the root of your Laravel project, run one of the following commands to install the JavaScript package and the Laravel integration:
+
+::: code-group
+
+```bash [npm]
 npm install @beacon-hq/beam
-# or
+```
+
+```bash [pnpm]
 pnpm add @beacon-hq/beam
-# or
+```
+
+```bash [yarn]
 yarn add @beacon-hq/beam
 ```
+
+:::
 
 You will also want to install the Laravel library:
 
@@ -36,15 +46,14 @@ const result = await beam().get('some-flag');
 ```
 
 ```tsx [React]
-import { useFeatureFlag, useFlagValue } from '@beacon-hq/beam/react';
+import { useFeatureFlag } from '@beacon-hq/beam/react';
 
 export function Example() {
-    const { isActive, loading, refresh } = useFeatureFlag('new-ui');
-    const { value } = useFlagValue<string>('experiment', { defaultValue: 'control' });
+    const { status, value, loading, refresh } = useFeatureFlag('new-ui');
     if (loading) return <span>Loading…</span>;
     return (
         <div>
-            <p>Active: {String(isActive)}</p>
+            <p>Active: {String(status)}</p>
             <p>Variant: {value}</p>
             <button onClick={() => refresh()}>Refresh</button>
         </div>
@@ -54,16 +63,15 @@ export function Example() {
 
 ```vue [Vue]
 <script setup lang="ts">
-import { useFeatureFlag, useFlagValue } from '@beacon-hq/beam/vue';
-const { isActive, loading, refresh } = useFeatureFlag('new-ui');
-const { value } = useFlagValue<string>('experiment', { defaultValue: 'control' });
+import { useFeatureFlag } from '@beacon-hq/beam/vue';
+const { status, value, loading, refresh } = useFeatureFlag('new-ui');
 </script>
 
 <template>
     <div>
         <p v-if="loading">Loading…</p>
         <template v-else>
-            <p>Active: {{ String(isActive) }}</p>
+            <p>Active: {{ String(status) }}</p>
             <p>Variant: {{ value }}</p>
             <button @click="refresh()">Refresh</button>
         </template>
