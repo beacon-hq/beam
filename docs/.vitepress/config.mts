@@ -8,7 +8,7 @@ export default defineVersionedConfig({
   description: "A client-side library for Beacon & Laravel Pennant",
   base: BASE_PATH,
   versioning: {
-    latestVersion: 'dev',
+    latestVersion: '0.1.4',
   },
   head: [
       ['meta', { name: 'author', content: 'Beacon HQ' }],
