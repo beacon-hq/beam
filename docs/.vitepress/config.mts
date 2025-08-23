@@ -49,6 +49,7 @@ export default defineVersionedConfig({
     ],
   ],
   themeConfig: {
+    logo: './images/icon.svg',
     search: {
       provider: 'local',
       options: {
