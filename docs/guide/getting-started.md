@@ -8,25 +8,27 @@ In the root of your Laravel project, run one of the following commands to instal
 
 ::: code-group
 
+```bash [composer]
+composer require beacon-hq/pennant-beam && \
+artisan beam:install # use your JS package manager to install @beacon-hq/beam
+```
+
 ```bash [npm]
-npm install @beacon-hq/beam
+npm install @beacon-hq/beam && \
+composer require beacon-hq/pennant-beam
 ```
 
 ```bash [pnpm]
-pnpm add @beacon-hq/beam
+pnpm add @beacon-hq/beam && \
+composer require beacon-hq/pennant-beam
 ```
 
 ```bash [yarn]
-yarn add @beacon-hq/beam
+yarn add @beacon-hq/beam && \
+composer require beacon-hq/pennant-beam
 ```
 
 :::
-
-You will also want to install the Laravel library:
-
-```bash
-composer require beacon-hq/pennant-beam
-```
 
 ## Quickstart
 
