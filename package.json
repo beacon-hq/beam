@@ -28,15 +28,18 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
         },
         "./react": {
             "types": "./dist/react.d.ts",
-            "import": "./dist/react.js"
+            "import": "./dist/react.js",
+            "default": "./dist/react.js"
         },
         "./vue": {
             "types": "./dist/vue.d.ts",
-            "import": "./dist/vue.js"
+            "import": "./dist/vue.js",
+            "default": "./dist/vue.js"
         },
         "./package.json": "./package.json"
     },
@@ -53,6 +56,7 @@
         "build": "vite build && vite build --mode types",
         "clean": "rimraf dist",
         "dev": "vite build --watch",
+        "prepare": "npm run build",
         "prepublishOnly": "npm run clean && npm run lint && npm run typecheck && npm run test && npm run build",
         "test": "vitest run",
         "test:watch": "vitest",
