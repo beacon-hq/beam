@@ -1,6 +1,6 @@
 {
     "name": "@beacon-hq/beam",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Frontend helper for Laravel Pennant feature flags (with support for React and Vue)",
     "keywords": [
         "beam",
